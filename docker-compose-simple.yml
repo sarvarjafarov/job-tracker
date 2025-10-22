@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: job_tracker_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: job_tracker
+      MYSQL_USER: jobtracker
+      MYSQL_PASSWORD: jobtracker123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - job_tracker_network
+
+  # Laravel Backend (Simple version without Filament)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-simple
+    container_name: job_tracker_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=job_tracker
+      - DB_USERNAME=jobtracker
+      - DB_PASSWORD=jobtracker123
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - job_tracker_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: job_tracker_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - job_tracker_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: job_tracker_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - job_tracker_network
+
+volumes:
+  mysql_data:
+
+networks:
+  job_tracker_network:
+    driver: bridge

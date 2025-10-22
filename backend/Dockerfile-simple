@@ -23,13 +23,8 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install PHP extensions (without intl)
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
-
-# Install intl extension separately (requires additional dependencies)
-RUN apt-get update && apt-get install -y libicu-dev \
-    && docker-php-ext-install intl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -43,8 +38,8 @@ COPY . /var/www/html
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www/html
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install dependencies (ignore intl requirement)
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-intl
 
 # Change current user to www
 USER www-data
