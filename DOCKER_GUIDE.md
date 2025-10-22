@@ -51,7 +51,7 @@ cd job-tracker
 
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8000
-- **Laravel Nova Admin:** http://localhost:8000/nova
+- **Filament Admin Panel:** http://localhost:8000/admin
 
 ### **Login Credentials:**
 - **Username:** `sarvar`

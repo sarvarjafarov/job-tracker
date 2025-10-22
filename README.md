@@ -10,7 +10,7 @@ A comprehensive job application tracking system built with Laravel backend and m
 - **Interview Scheduling**: Schedule and track interviews
 - **Notes System**: Add private and public notes to applications
 - **Analytics Dashboard**: Track application success rates and metrics
-- **CMS Integration**: Laravel Nova for administrative tasks
+- **CMS Integration**: Filament Admin Panel for administrative tasks
 
 ## Technology Stack
 
@@ -18,7 +18,7 @@ A comprehensive job application tracking system built with Laravel backend and m
 - Laravel 10+ (PHP 8.1+)
 - MySQL/PostgreSQL database
 - Laravel Sanctum for API authentication
-- Laravel Nova for CMS
+- Filament Admin Panel (Free CMS)
 
 ### Frontend
 - React.js with TypeScript
