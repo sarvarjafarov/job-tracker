@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Company extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'website',
+        'email',
+        'phone',
+        'address',
+        'description',
+        'industry',
+        'size',
+        'logo_url',
+    ];
+
+    /**
+     * Get applications for this company
+     */
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    /**
+     * Get jobs for this company
+     */
+    public function jobs()
+    {
+        return $this->hasMany(Job::class);
+    }
+}
