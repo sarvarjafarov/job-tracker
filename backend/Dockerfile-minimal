@@ -32,14 +32,20 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
+# Copy composer files first
+COPY composer.json composer.lock* ./
+
+# Use simple composer.json without Filament
+RUN if [ -f composer-simple.json ]; then cp composer-simple.json composer.json; fi
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+# Copy application files
 COPY . /var/www/html
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www/html
-
-# Install dependencies (ignore platform requirements)
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Change current user to www
 USER www-data
